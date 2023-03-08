@@ -10,3 +10,8 @@
 * R8 Describe your projects models in terms of the relationships they have with each other
 * R9 Discuss the database relations to be implemented in your application
 * R10 Describe the way tasks are allocated and tracked in your project
+
+
+Database Permissions -  Name = wrapi_db
+                        Owner = wrapi_dev
+                        Password = wrapi12345
