@@ -14,6 +14,23 @@ def create_db():
 
 @db_commands.cli.command("seed")
 def seed_db():
+    # Users are created first
+    admin_user = User(
+        name = "Lars Jurly",
+        email = "admin@email.com",
+        password = bcrypt.generate_password_hash("password123").decode("utf-8"),
+        admin = True
+    )
+    db.session.add(admin_user)
+
+    user1 = User(
+        name = "Samantha Puddingstone",
+        email = "user1@email.com",
+        password = bcrypt.generate_password_hash("123456").decode("utf-8")
+    )
+    db.session.add(user1)
+    
+    db.session.commit()
     from datetime import date
     # create the sample rescues
     rescue1 = Rescue(
@@ -43,22 +60,7 @@ def seed_db():
     )
     db.session.add(notice1)
 
-    admin_user = User(
-        name = "Lars Jurly",
-        email = "admin@email.com",
-        password = bcrypt.generate_password_hash("password123").decode("utf-8"),
-        admin = True
-    )
-    db.session.add(admin_user)
 
-    user1 = User(
-        name = "Samantha Puddingstone",
-        email = "user1@email.com",
-        password = bcrypt.generate_password_hash("123456").decode("utf-8")
-    )
-    db.session.add(user1)
-    
-    db.session.commit()
     print("Table seeded") 
 
 # drop the tables client command
