@@ -8,3 +8,8 @@ class Rescue(db.Model):
     classification = db.Column(db.String())
     town = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    animals = db.relationship(
+        "Animal",
+        backref="rescue",
+        cascade="all, delete"
+    )

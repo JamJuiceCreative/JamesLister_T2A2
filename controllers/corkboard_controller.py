@@ -3,10 +3,20 @@ from main import db
 from models.corkboard import Corkboard
 from models.users import User
 from schemas.corkboard_schema import notice_schema, corkboard_schema
+from schemas.user_schema import user_schema, users_schema
 from datetime import date
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 corkboard = Blueprint('corkboard', __name__, url_prefix="/corkboard")
+
+# GET users/ corkboard endpoint
+
+@corkboard.route("/users", methods = ["GET"])
+def get_users():
+    # get all users from the database table
+    users_list = User.query.all()
+    result = users_schema.dump(users_list)
+    return jsonify(result)
 
 # GET all notices routes endpoint
 @corkboard.route("/", methods=["GET"])
@@ -24,16 +34,30 @@ def get_notice(id):
     result = notice_schema.dump(notice)
     return jsonify(result)
 
+# GET search queries with strings
+@corkboard.route("/search", methods=["GET"])
+def search_corkboard():
+    corkboard_list = []
+    if request.args.get('classification'):
+        corkboard_list = Corkboard.query.filter_by(notice = request.args.get('notice'))
+    elif request.args.get('town'):
+        corkboard_list = Corkboard.query.filter_by(status = request.args.get('status'))
+
+    result = corkboard_schema.dump(corkboard_list)
+    return jsonify(result)
+
 # POST notice endpoint
 @corkboard.route("/", methods=["POST"])
 @jwt_required()
 def create_notice():
     notice_fields = notice_schema.load(request.json)
+    user_id = get_jwt_identity()
     new_notice = Corkboard()
     new_notice.date = date.today()
     new_notice.notice = notice_fields["notice"]
     new_notice.description = notice_fields["description"]
     new_notice.status = notice_fields["status"]
+    new_notice.user_id = user_id
     db.session.add(new_notice)
     db.session.commit()
     return jsonify(notice_schema.dump(new_notice))

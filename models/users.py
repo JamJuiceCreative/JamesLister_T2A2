@@ -11,8 +11,13 @@ class User(db.Model):
         backref="user",
         cascade="all, delete"
     )
-    # comments = db.relationship(
-    #     "Comment",
-    #     backref="user",
-    #     cascade="all, delete"
-    # )
+    corkboard = db.relationship(
+        "Corkboard",
+        backref="user",
+        cascade="all, delete"
+    )
+    animals = db.relationship(
+        "Animal",
+        backref="user",
+        cascade="all, delete"
+    )

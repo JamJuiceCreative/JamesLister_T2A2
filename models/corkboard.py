@@ -7,3 +7,4 @@ class Corkboard(db.Model):
     notice = db.Column(db.String())
     description = db.Column(db.String())
     status = db.Column(db.String())
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)

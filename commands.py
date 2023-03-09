@@ -4,6 +4,7 @@ from main import bcrypt
 from models.corkboard import Corkboard
 from models.rescues import Rescue
 from models.users import User
+from models.animals import Animal
 from datetime import date
 
 db_commands = Blueprint("db", __name__)
@@ -31,13 +32,14 @@ def seed_db():
     db.session.add(user1)
     
     db.session.commit()
-    from datetime import date
+   
     # create the sample rescues
     rescue1 = Rescue(
         # Attributes only, SQLAlchemy to manage ID
         name = "Karen's Koala Sanctuary",
         classification = "koala's only",
-        town = "Brisbane"
+        town = "Brisbane",
+        user_id = user1.id
     )
     db.session.add(rescue1)
 
@@ -45,7 +47,8 @@ def seed_db():
         # Attributes only, SQLAlchemy to manage ID at this stage
         name = "Razor's Reptile Lodge",
         classification = "Reptiles",
-        town = "Cairns"
+        town = "Cairns",
+        user = user1
     )
     db.session.add(rescue2)
 
@@ -56,9 +59,37 @@ def seed_db():
         notice = "Activities for Volunteers",
         description = "Here you can post activities for volunteers such as supply runs, working b's and cleanups",
         date = date.today(),
-        status = "Open"
+        status = "Open",
+        user_id = admin_user.id
     )
     db.session.add(notice1)
+
+    
+
+    animal1 = Animal(
+        name = "Koala",
+        classification = "Marsupial",
+        user = user1,
+        rescue = rescue1 
+    )
+    db.session.add(animal1)
+
+    animal2 = Animal(
+        name = "Kangaroo",
+        classification = "Marsupial",
+        user = user1,
+        rescue = rescue1 
+    )
+    db.session.add(animal2)
+    animal3 = Animal(
+        name = "Echidna",
+        classification = "Monotreme",
+        user = user1,
+        rescue = rescue1 
+    )
+    db.session.add(animal3)
+
+    db.session.commit()
 
 
     print("Table seeded") 
