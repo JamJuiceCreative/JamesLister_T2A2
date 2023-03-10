@@ -1,6 +1,5 @@
 from main import db
 
-
 class Rescue(db.Model):
     __tablename__= "rescues"
     id = db.Column(db.Integer, primary_key=True)
