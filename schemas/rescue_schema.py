@@ -8,9 +8,9 @@ class RescueSchema(ma.Schema):
         # Fields to expose
         fields = ("id", "name", "classification", "town", "user", "animals")
     user = fields.Nested("UserSchema", only=("name",))
-    animals = fields.List(fields.Nested("AnimalSchema"))
+    animals = fields.List(fields.Nested("AnimalSchema", exclude=('rescue',)))
 
-#single card schema, when one card needs to be retrieved
+#single rescue schema, when one rescue needs to be retrieved
 rescue_schema = RescueSchema()
-#multiple card schema, when many cards need to be retrieved
+#multiple rescue schema, when many rescues need to be retrieved
 rescues_schema = RescueSchema(many=True)

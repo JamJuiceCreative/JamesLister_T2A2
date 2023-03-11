@@ -83,25 +83,25 @@ def add_animal(id):
     #Make sure it is in the database
     if not user:
         return abort(401, description="You're not allowed to do that!")
-
     # find the rescue
     rescue = Rescue.query.filter_by(id=id).first()
     #return an error if the rescue doesn't exist
     if not rescue:
         return abort(400, description= "Rescue organisation not in database")
-    
     # check if the animal already exists in the database
     animal = Animal.query.filter_by(name=animal_fields["name"]).first()
     if animal:
         # check if the relationship already exists in the rescues_animals table
         existing_relationship = db.session.query(rescues_animals).filter_by(animal_id=animal.id, rescue_id=rescue.id).first()
-        if not existing_relationship:
+        if existing_relationship:
+            return jsonify(({"message": "This animal has already been associated with this rescue"}))
+        else:
             # if relationship does not exist, add a new one
             rescues_animals_query = rescues_animals.insert().values(animal_id=animal.id, rescue_id=rescue.id)
             db.session.execute(rescues_animals_query)
             db.session.commit()
         # return the animal in the response
-        return jsonify(animal_schema.dump(animal))
+        return jsonify(animal_schema.dump(animal,))
     else:
         #create the Animal with the given values
         new_animal = Animal()
@@ -121,7 +121,7 @@ def add_animal(id):
         db.session.commit()
         
         #return the new animal in the response
-        return jsonify(animal_schema.dump(new_animal))
+        return jsonify(animal_schema.dump(new_animal,))
 
 # PUT update rescue route endpoint
 
