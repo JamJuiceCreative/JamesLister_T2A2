@@ -114,7 +114,7 @@ def seed_db():
             town = "Hobart",
             user = user4
         )
-        db.session.add(rescue42)
+        db.session.add(rescue4)
 
     # create the sample corkboard notice
     # Check to see if notice already exists

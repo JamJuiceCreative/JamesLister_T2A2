@@ -3,6 +3,7 @@ from main import db
 from models.rescues import Rescue
 from models.users import User
 from models.animals import Animal
+from models.rescues_animals import rescues_animals
 from schemas.rescue_schema import rescue_schema, rescues_schema
 from schemas.user_schema import user_schema, users_schema
 from schemas.animal_schema import animal_schema, animals_schema
@@ -88,19 +89,37 @@ def add_animal(id):
     #return an error if the rescue doesn't exist
     if not rescue:
         return abort(400, description= "Rescue organisation not in database")
-    #create the Animal with the given values
-    new_animal = Animal()
-    new_animal.name = animal_fields["name"]
-    new_animal.classification = animal_fields["classification"]
-    # Use the rescue gotten by the id of the route
-    new_animal.rescue = rescue
-    # Use that id to set the ownership of the rescue org
-    new_animal.user_id = user_id
-    # add to the database and commit
-    db.session.add(new_animal)
-    db.session.commit()
-    #return the rescue organisation in the response
-    return jsonify(rescue_schema.dump(rescue))
+    #check if the animal already exists in the database
+    animal = Animal.query.filter_by(name=animal_fields["name"]).first()
+    if animal:
+        # if animal already exists, update the rescue_id in the rescues_animals table
+        animal.rescue_id = rescue.id
+        rescues_animals_query = rescues_animals.update().values(rescue_id=rescue.id).where(rescues_animals.c.animal_id == animal.id)
+        db.session.execute(rescues_animals_query)
+        db.session.commit()
+        # return the animal in the response
+        return jsonify(animal_schema.dump(animal))
+
+    else:
+        #create the Animal with the given values
+        new_animal = Animal()
+        new_animal.name = animal_fields["name"]
+        new_animal.classification = animal_fields["classification"]
+        # Use the rescue gotten by the id of the route
+        new_animal.rescue = rescue
+        # Use that id to set the ownership of the rescue org
+        new_animal.user_id = user_id
+        # add to the database and commit
+        db.session.add(new_animal)
+        db.session.commit()
+
+        # add the new animal to the rescues_animals table
+        rescues_animals_query = rescues_animals.insert().values(animal_id=new_animal.id, rescue_id=rescue.id)
+        db.session.execute(rescues_animals_query)
+        db.session.commit()
+        
+        #return the new animal in the response
+        return jsonify(animal_schema.dump(new_animal))
 
 # PUT update rescue route endpoint
 
