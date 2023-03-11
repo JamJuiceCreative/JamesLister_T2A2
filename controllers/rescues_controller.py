@@ -89,17 +89,19 @@ def add_animal(id):
     #return an error if the rescue doesn't exist
     if not rescue:
         return abort(400, description= "Rescue organisation not in database")
-    #check if the animal already exists in the database
+    
+    # check if the animal already exists in the database
     animal = Animal.query.filter_by(name=animal_fields["name"]).first()
     if animal:
-        # if animal already exists, update the rescue_id in the rescues_animals table
-        animal.rescue_id = rescue.id
-        rescues_animals_query = rescues_animals.update().values(rescue_id=rescue.id).where(rescues_animals.c.animal_id == animal.id)
-        db.session.execute(rescues_animals_query)
-        db.session.commit()
+        # check if the relationship already exists in the rescues_animals table
+        existing_relationship = db.session.query(rescues_animals).filter_by(animal_id=animal.id, rescue_id=rescue.id).first()
+        if not existing_relationship:
+            # if relationship does not exist, add a new one
+            rescues_animals_query = rescues_animals.insert().values(animal_id=animal.id, rescue_id=rescue.id)
+            db.session.execute(rescues_animals_query)
+            db.session.commit()
         # return the animal in the response
         return jsonify(animal_schema.dump(animal))
-
     else:
         #create the Animal with the given values
         new_animal = Animal()
