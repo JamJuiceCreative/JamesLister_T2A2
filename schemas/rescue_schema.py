@@ -1,6 +1,7 @@
 from main import ma
 from marshmallow import fields
 
+
 class RescueSchema(ma.Schema):
     class Meta:
         ordered=True

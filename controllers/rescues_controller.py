@@ -88,7 +88,7 @@ def add_animal(id):
     #return an error if the rescue doesn't exist
     if not rescue:
         return abort(400, description= "Rescue organisation not in database")
-    #create the comment with the given values
+    #create the Animal with the given values
     new_animal = Animal()
     new_animal.name = animal_fields["name"]
     new_animal.classification = animal_fields["classification"]

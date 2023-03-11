@@ -16,8 +16,3 @@ class User(db.Model):
         backref="user",
         cascade="all, delete"
     )
-    animals = db.relationship(
-        "Animal",
-        backref="user",
-        cascade="all, delete"
-    )

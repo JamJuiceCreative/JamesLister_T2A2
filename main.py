@@ -6,6 +6,7 @@ from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 
 
+
 # objects area
 db = SQLAlchemy()
 ma = Marshmallow()
