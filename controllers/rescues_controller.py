@@ -4,6 +4,7 @@ from models.rescues import Rescue
 from models.users import User
 from models.animals import Animal
 from models.rescues_animals import rescues_animals
+from models.animals_rescues import animals_rescues
 from schemas.rescue_schema import rescue_schema, rescues_schema
 from schemas.user_schema import user_schema, users_schema
 from schemas.animal_schema import animal_schema, animals_schema
@@ -100,6 +101,14 @@ def add_animal(id):
             rescues_animals_query = rescues_animals.insert().values(animal_id=animal.id, rescue_id=rescue.id)
             db.session.execute(rescues_animals_query)
             db.session.commit()
+        relationship_existing = db.session.query(animals_rescues).filter_by(rescue_id=rescue.id, animal_id=animal.id).first()
+        if relationship_existing:
+            return jsonify(({"message": "This rescue has already been associated with this animal"}))
+        else:
+            # if relationship does not exist, add a new one
+            animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=animal.id)
+            db.session.execute(animals_rescues_query)
+            db.session.commit()
         # return the animal in the response
         return jsonify(animal_schema.dump(animal,))
     else:
@@ -108,15 +117,16 @@ def add_animal(id):
         new_animal.name = animal_fields["name"]
         new_animal.classification = animal_fields["classification"]
         # Use the rescue gotten by the id of the route
-        new_animal.rescue = rescue
+        new_animal.rescue = [rescue]
         # Use that id to set the ownership of the rescue org
         new_animal.user_id = user_id
         # add to the database and commit
         db.session.add(new_animal)
         db.session.commit()
-
-        # add the new animal to the rescues_animals table
+        # add the new rescues animals association to the rescues_animals table
         rescues_animals_query = rescues_animals.insert().values(animal_id=new_animal.id, rescue_id=rescue.id)
+        # add the new rescue rescues animals association to the animals_rescue table
+        animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=new_animal.id)
         db.session.execute(rescues_animals_query)
         db.session.commit()
         

@@ -16,7 +16,7 @@ def get_animals():
     result = animals_schema.dump(animals_list)
     return jsonify(result)
 
-# GET all animas with associated rescues endpoint
+# GET all animals with associated rescues endpoint
 @animals.route("/rescues", methods = ["GET"])
 def get_animals_rescues():
     animals = Animal.query.all()
@@ -34,4 +34,17 @@ def get_animal(id):
     if not animal:
         return abort(400, description = "Animal does not exist")
     result = animal_schema.dump(animal)
+    return jsonify(result)
+
+# search for rescues by animal association
+# GET search queries with strings
+@animals.route("/search", methods=["GET"])
+def search_rescues():
+    animals_list = []
+    if request.args.get('name'):
+        animals_list = Animal.query.filter_by(name = request.args.get('name'))
+    elif request.args.get('classification'):
+        animals_list = Animal.query.filter_by(classification = request.args.get('classification'))
+
+    result = animals_schema.dump(animals_list)
     return jsonify(result)
