@@ -38,10 +38,8 @@ def get_notice(id):
 @corkboard.route("/search", methods=["GET"])
 def search_corkboard():
     corkboard_list = []
-    if request.args.get('classification'):
-        corkboard_list = Corkboard.query.filter_by(notice = request.args.get('notice'))
-    elif request.args.get('town'):
-        corkboard_list = Corkboard.query.filter_by(status = request.args.get('status'))
+    if request.args.get('status'):
+        corkboard_list = Corkboard.query.filter_by(notice = request.args.get('status'))
 
     result = corkboard_schema.dump(corkboard_list)
     return jsonify(result)
