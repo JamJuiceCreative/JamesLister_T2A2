@@ -11,7 +11,7 @@ class Rescue(db.Model):
     animals = db.relationship(
         "Animal",
         secondary=rescues_animals,
-        backref=db.backref("rescues", lazy="dynamic"),
+        backref=db.backref("rescue", lazy="dynamic"),
         lazy="dynamic"
     )
     def add_animal(self, animal):

@@ -6,6 +6,7 @@ from models.rescues import Rescue
 from models.users import User
 from models.animals import Animal
 from models.rescues_animals import rescues_animals
+from models.animals_rescues import animals_rescues
 from datetime import date
 
 
@@ -174,9 +175,22 @@ def seed_db():
 
         db.session.commit()
 
-        print("Table seeded")
+        print("Associations seeded")
     else:
         print("Rescues have already been associated with animals, skipping seeding")
+    # Check if rescues have already been associated with animals
+    if not db.session.query(animals_rescues).first():
+        # Associate animals with rescues
+        animal1.rescues = [rescue1, rescue3]
+        animal2.rescues = [rescue3]
+        animal3.rescues = [rescue4]
+        animal4.rescues = [rescue2]
+
+        db.session.commit()
+
+        print("Associations seeded")
+    else:
+        print("Animals have already been associated with rescues, skipping seeding")
 
 # drop the tables client command
 @db_commands.cli.command("drop")
