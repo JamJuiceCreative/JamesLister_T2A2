@@ -5,8 +5,9 @@ class CorkboardSchema(ma.Schema):
     class Meta:
         ordered = True
         # Fields to expose
-        fields = ("id", "date", "notice", "description", "status", "user")
+        fields = ("id", "date", "notice", "description", "status", "user", "rescue")
     user = fields.Nested("UserSchema", only=("name",))
+    rescue = fields.Nested("RescueSchema", only=("id", "name"))
 
 #single card schema, when one card needs to be retrieved
 notice_schema = CorkboardSchema()

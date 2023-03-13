@@ -14,7 +14,7 @@ corkboard = Blueprint('corkboard', __name__, url_prefix="/corkboard")
 @corkboard.route("/users", methods = ["GET"])
 def get_users():
     # get all users from the database table
-    users_list = User.query.all()
+    users_list = User.query.options(db.joinedload(User.rescues)).all()
     result = users_schema.dump(users_list)
     return jsonify(result)
 

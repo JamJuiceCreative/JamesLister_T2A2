@@ -6,7 +6,7 @@ class RescueSchema(ma.Schema):
     class Meta:
         ordered=True
         # Fields to expose
-        fields = ("id", "name", "classification", "town", "user", "animals")
+        fields = ("id", "name", "classification", "town", "user_id", "animals")
     user = fields.Nested("UserSchema", only=("name",))
     animals = fields.List(fields.Nested("AnimalSchema", exclude=('rescue',)))
 
