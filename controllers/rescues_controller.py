@@ -92,22 +92,19 @@ def add_animal(id):
     # check if the animal already exists in the database
     animal = Animal.query.filter_by(name=animal_fields["name"]).first()
     if animal:
-        # check if the relationship already exists in the rescues_animals table
+    # check if the relationship already exists in the rescues_animals table
         existing_relationship = db.session.query(rescues_animals).filter_by(animal_id=animal.id, rescue_id=rescue.id).first()
         if existing_relationship:
             return jsonify(({"message": "This animal has already been associated with this rescue"}))
         else:
-            # if relationship does not exist, add a new one
+            # if relationship does not exist, add a new one to the rescues_animals table
             rescues_animals_query = rescues_animals.insert().values(animal_id=animal.id, rescue_id=rescue.id)
-            db.session.execute(rescues_animals_query)
-            db.session.commit()
-        relationship_existing = db.session.query(animals_rescues).filter_by(rescue_id=rescue.id, animal_id=animal.id).first()
-        if relationship_existing:
-            return jsonify(({"message": "This rescue has already been associated with this animal"}))
-        else:
-            # if relationship does not exist, add a new one
+            db.session.execute(rescues_animals_query)       
+            #also add one to the animals_rescues table
             animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=animal.id)
             db.session.execute(animals_rescues_query)
+            # update the animal classification
+            animal.classification = animal_fields["classification"]
             db.session.commit()
         # return the animal in the response
         return jsonify(animal_schema.dump(animal,))
@@ -124,10 +121,9 @@ def add_animal(id):
         db.session.add(new_animal)
         db.session.commit()
         # add the new rescues animals association to the rescues_animals table
-        rescues_animals_query = rescues_animals.insert().values(animal_id=new_animal.id, rescue_id=rescue.id)
         # add the new rescue rescues animals association to the animals_rescue table
         animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=new_animal.id)
-        db.session.execute(rescues_animals_query)
+        db.session.execute(animals_rescues_query)
         db.session.commit()
         
         #return the new animal in the response
@@ -157,13 +153,49 @@ def update_rescue(id):
     return jsonify(rescue_schema.dump(rescue))
     
 
-# DELETE rescue endpoint
-@rescues.route("/<int:id>/", methods=["DELETE"])
+# DELETE delete an animal from a rescue organisation
+@rescues.route("/<int:id>/animals", methods=["DELETE"])
+# logged in user required
 @jwt_required()
-def delete_rescue(id):
+# rescue id is required to delete an animal
+def delete_animal(id):
+    # get the user id invoking get_jwt_identity
+    user_id = get_jwt_identity()
+    # Find it in the db
+    user = User.query.get(user_id)
+    # Make sure it is in the database
+    if not user:
+        return abort(401, description="You're not allowed to do that!")
+    # find the rescue
     rescue = Rescue.query.filter_by(id=id).first()
+    # return an error if the rescue doesn't exist
     if not rescue:
-        return abort(400, description = "Rescue does not exist!")
-    db.session.delete(rescue)
+        return abort(400, description="Rescue organisation not in database")
+    # get the animal name from the request body
+    animal_name = request.json.get("name", None)
+    # check if the animal exists in the rescue
+    animal = Animal.query.filter_by(name=animal_name).filter(Animal.rescues.any(id=id)).first()
+    if not animal:
+        return abort(400, description="Animal not found in rescue organisation")
+    # check if the animal is associated with any other rescues
+    other_rescues = animal.rescues.filter(Rescue.id != id).all()
+    if other_rescues:
+        # if the animal is associated with other rescues, remove the association with this rescue
+        animal.rescues.remove(rescue)
+        db.session.commit()
+    else:
+        # if the animal is not associated with any other rescues, delete it from the animals table
+        db.session.delete(animal)
+        db.session.commit()
+    # delete the association from the rescues_animals table
+    rescues_animals_query = rescues_animals.delete().where(
+        rescues_animals.c.animal_id == animal.id and rescues_animals.c.rescue_id == rescue.id)
+    db.session.execute(rescues_animals_query)
     db.session.commit()
-    return jsonify(rescue_schema.dump(rescue))
+    # delete the association from the animals_rescues table
+    animals_rescues_query = animals_rescues.delete().where(
+        animals_rescues.c.rescue_id == rescue.id and animals_rescues.c.animal_id == animal.id)
+    db.session.execute(animals_rescues_query)
+    db.session.commit()
+    # return success message
+    return jsonify({"message": "Animal deleted from rescue organisation"})
