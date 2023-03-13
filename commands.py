@@ -7,6 +7,7 @@ from models.users import User
 from models.animals import Animal
 from models.rescues_animals import rescues_animals
 from models.animals_rescues import animals_rescues
+from models.responses import Response
 from datetime import date
 
 
@@ -119,9 +120,9 @@ def seed_db():
 
     # create the sample corkboard notice
     # Check to see if notice already exists
-    notice1 = Corkboard.query.filter_by(notice="Activities for Volunteers").first()
-    if not notice1:
-        notice1 = Corkboard(
+    corkboard1 = Corkboard.query.filter_by(notice="Activities for Volunteers").first()
+    if not corkboard1:
+        corkboard1 = Corkboard(
             # Attributes only, SQLAlchemy to manage ID at this stage
             notice = "Activities for Volunteers",
             description = "Here you can post activities for volunteers such as supply runs, working b's and cleanups",
@@ -129,7 +130,16 @@ def seed_db():
             status = "Open",
             user_id = admin_user.id
         )
-        db.session.add(notice1)
+    db.session.add(corkboard1)
+    db.session.commit()
+    response1 = Response(
+    # set the attributes, not the id, SQLAlchemy will manage that for us
+    response = "users can post responses if they'd like to assist with the volunteer activity.",
+    user = user1,
+    corkboard = corkboard1
+    )
+    # Add the object as a new row to the table
+    db.session.add(response1)
     # Check to see if Koala already exists
     koala = Animal.query.filter_by(name="Koala").first()
     if not koala:
@@ -192,6 +202,11 @@ def seed_db():
     else:
         print("Animals have already been associated with rescues, skipping seeding")
 
+
+
+        
+    print("Tables seeded")
+    
 # drop the tables client command
 @db_commands.cli.command("drop")
 def drop_db():

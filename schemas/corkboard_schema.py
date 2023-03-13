@@ -8,8 +8,9 @@ class CorkboardSchema(ma.Schema):
         fields = ("id", "date", "notice", "description", "status", "user", "rescue")
     user = fields.Nested("UserSchema", only=("name",))
     rescue = fields.Nested("RescueSchema", only=("id", "name"))
+    comments = fields.List(fields.Nested("ResponseSchema"))
 
 #single card schema, when one card needs to be retrieved
-notice_schema = CorkboardSchema()
+corkboard_schema = CorkboardSchema()
 #multiple card schema, when many cards need to be retrieved
-corkboard_schema = CorkboardSchema(many=True)
+corkboards_schema = CorkboardSchema(many=True)

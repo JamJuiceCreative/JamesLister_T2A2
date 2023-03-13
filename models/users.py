@@ -16,3 +16,8 @@ class User(db.Model):
         backref="user",
         cascade="all, delete"
     )
+    responses = db.relationship(
+        "Response",
+        backref="user",
+        cascade="all, delete"
+    )
