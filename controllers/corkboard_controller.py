@@ -39,7 +39,7 @@ def get_notice(id):
 def search_corkboard():
     corkboard_list = []
     if request.args.get('status'):
-        corkboard_list = Corkboard.query.filter_by(notice = request.args.get('status'))
+        corkboard_list = Corkboard.query.filter(Corkboard.status.ilike('%' + request.args.get('status') + '%'))
 
     result = corkboard_schema.dump(corkboard_list)
     return jsonify(result)

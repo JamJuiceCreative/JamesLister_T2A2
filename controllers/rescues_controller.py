@@ -41,9 +41,9 @@ def get_rescue(id):
 def search_rescues():
     rescues_list = []
     if request.args.get('classification'):
-        rescues_list = Rescue.query.filter_by(classification = request.args.get('classification'))
+        rescues_list = Rescue.query.filter(Rescue.classification.ilike('%' + request.args.get('classification') + '%'))
     elif request.args.get('town'):
-        rescues_list = Rescue.query.filter_by(town = request.args.get('town'))
+        rescues_list = Rescue.query.filter(Rescue.town.ilike('%' + request.args.get('town') + '%'))
 
     result = rescues_schema.dump(rescues_list)
     return jsonify(result)
@@ -165,16 +165,16 @@ def delete_animal(id):
     user = User.query.get(user_id)
     # Make sure it is in the database
     if not user:
-        return abort(401, description="You're not allowed to do that!")
+        return abort(401, description="You're not authorised to do that!")
     # find the rescue
     rescue = Rescue.query.filter_by(id=id).first()
     # return an error if the rescue doesn't exist
     if not rescue:
-        return abort(400, description="Rescue organisation not in database")
+        return abort(400, description="Rescue organisation not in database!")
     # get the animal name from the request body
     animal_name = request.json.get("name", None)
     # check if the animal exists in the rescue
-    animal = Animal.query.filter_by(name=animal_name).filter(Animal.rescues.any(id=id)).first()
+    animal = Animal.query.filter(Animal.name.ilike(animal_name)).filter(Animal.rescues.any(id=id)).first()
     if not animal:
         return abort(400, description="Animal not found in rescue organisation")
     # check if the animal is associated with any other rescues
@@ -197,5 +197,4 @@ def delete_animal(id):
         animals_rescues.c.rescue_id == rescue.id and animals_rescues.c.animal_id == animal.id)
     db.session.execute(animals_rescues_query)
     db.session.commit()
-    # return success message
     return jsonify({"message": "Animal deleted from rescue organisation"})
