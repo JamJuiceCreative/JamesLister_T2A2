@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request, abort
 from main import db
 from models.corkboard import Corkboard
 from models.users import User
+from models.responses import Response
 from schemas.corkboard_schema import corkboards_schema, corkboard_schema
 from schemas.user_schema import user_schema, users_schema
 from schemas.response_schema import response_schema, responses_schema
@@ -35,7 +36,7 @@ def get_corkboard(id):
     result = corkboard_schema.dump(corkboard)
     return jsonify(result)
 
-# GET search queries with strings
+# GET search queries with strings (case insensitive)
 @corkboards.route("/search", methods=["GET"])
 def search_corkboards():
     corkboards_list = []
