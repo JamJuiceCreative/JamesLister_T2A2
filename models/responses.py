@@ -10,3 +10,4 @@ class Response(db.Model):
     # two foreign keys
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     corkboard_id = db.Column(db.Integer, db.ForeignKey("corkboards.id"), nullable=False)
+    

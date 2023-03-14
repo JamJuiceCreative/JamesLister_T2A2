@@ -135,7 +135,7 @@ def seed_db():
     response1 = Response(
     # set the attributes, not the id, SQLAlchemy will manage that for us
     response = "users can post responses if they'd like to assist with the volunteer activity.",
-    user = user1,
+    user_id = admin_user.id,
     corkboard = corkboard1
     )
     # Add the object as a new row to the table
