@@ -5,7 +5,7 @@ from models.corkboard import Corkboard
 from models.rescues import Rescue
 from models.users import User
 from models.animals import Animal
-from models.rescues_animals import rescues_animals
+# from models.rescues_animals import rescues_animals
 from models.animals_rescues import animals_rescues
 from models.responses import Response
 from datetime import date
@@ -175,19 +175,19 @@ def seed_db():
 
     db.session.commit()
 
-    # Check if rescues have already been associated with animals
-    if not db.session.query(rescues_animals).first():
-        # Associate animals with rescues
-        rescue1.animals = [animal1]
-        rescue2.animals = [animal4]
-        rescue3.animals = [animal1, animal2]
-        rescue4.animals = [animal3]
+    # # Check if rescues have already been associated with animals
+    # if not db.session.query(rescues_animals).first():
+    #     # Associate animals with rescues
+    #     rescue1.animals = [animal1]
+    #     rescue2.animals = [animal4]
+    #     rescue3.animals = [animal1, animal2]
+    #     rescue4.animals = [animal3]
 
-        db.session.commit()
+    #     db.session.commit()
 
-        print("Associations seeded")
-    else:
-        print("Rescues have already been associated with animals, skipping seeding")
+    #     print("Associations seeded")
+    # else:
+    #     print("Rescues have already been associated with animals, skipping seeding")
     # Check if rescues have already been associated with animals
     if not db.session.query(animals_rescues).first():
         # Associate animals with rescues

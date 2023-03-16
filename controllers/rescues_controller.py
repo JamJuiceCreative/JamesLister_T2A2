@@ -3,7 +3,7 @@ from main import db
 from models.rescues import Rescue
 from models.users import User
 from models.animals import Animal
-from models.rescues_animals import rescues_animals
+# from models.rescues_animals import rescues_animals
 from models.animals_rescues import animals_rescues
 from schemas.rescue_schema import rescue_schema, rescues_schema
 from schemas.user_schema import user_schema, users_schema
@@ -93,14 +93,11 @@ def add_animal(id):
     animal = Animal.query.filter_by(name=animal_fields["name"]).first()
     if animal:
     # check if the relationship already exists in the rescues_animals table
-        existing_relationship = db.session.query(rescues_animals).filter_by(animal_id=animal.id, rescue_id=rescue.id).first()
+        existing_relationship = db.session.query(animals_rescues).filter_by(animal_id=animal.id, rescue_id=rescue.id).first()
         if existing_relationship:
             return jsonify(({"message": "This animal has already been associated with this rescue"}))
         else:
             # if relationship does not exist, add a new one to the rescues_animals table
-            rescues_animals_query = rescues_animals.insert().values(animal_id=animal.id, rescue_id=rescue.id)
-            db.session.execute(rescues_animals_query)       
-            #also add one to the animals_rescues table
             animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=animal.id)
             db.session.execute(animals_rescues_query)
             # update the animal classification

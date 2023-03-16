@@ -1,5 +1,5 @@
 from main import db
-from models.rescues_animals import rescues_animals
+from models.animals_rescues import animals_rescues
 
 class Rescue(db.Model):
     __tablename__= "rescues"
@@ -10,8 +10,8 @@ class Rescue(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     animals = db.relationship(
         "Animal",
-        secondary=rescues_animals,
-        backref=db.backref("rescue", lazy="dynamic"),
+        secondary=animals_rescues,
+        back_populates="rescues",
         lazy="dynamic"
     )
     def add_animal(self, animal):
