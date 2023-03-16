@@ -174,11 +174,11 @@ def delete_animal(id):
     # get the animal name from the request body
     animal_name = request.json.get("name", None)
     # check if the animal exists in the rescue
-    animal = Animal.query.filter(Animal.name.ilike(animal_name)).filter(Animal.rescues.any(id=id)).first()
+    animal = Animal.query.filter(Animal.name.ilike(animal_name)).filter(Animal.rescues.any(id=id, name=rescue.name)).first()
     if not animal:
         return abort(400, description="Animal not found in rescue organisation")
     # check if the animal is associated with any other rescues
-    other_rescues = animal.rescues.filter(Rescue.id != id).all()
+    other_rescues = animal.rescues.filter(Rescue.id != id, Rescue.animals.any(id=animal.id)).all()
     if other_rescues:
         # if the animal is associated with other rescues, remove the association with this rescue
         animal.rescues.remove(rescue)
@@ -188,13 +188,14 @@ def delete_animal(id):
         db.session.delete(animal)
         db.session.commit()
     # delete the association from the rescues_animals table
-    rescues_animals_query = rescues_animals.delete().where(
-        rescues_animals.c.animal_id == animal.id and rescues_animals.c.rescue_id == rescue.id)
-    db.session.execute(rescues_animals_query)
-    db.session.commit()
+    # rescues_animals_query = rescues_animals.delete().where(
+    #     rescues_animals.c.animal_id == animal.id and rescues_animals.c.rescue_id == rescue.id)
+    # db.session.execute(rescues_animals_query)
+    # db.session.commit()
+
     # delete the association from the animals_rescues table
-    animals_rescues_query = animals_rescues.delete().where(
-        animals_rescues.c.rescue_id == rescue.id and animals_rescues.c.animal_id == animal.id)
-    db.session.execute(animals_rescues_query)
-    db.session.commit()
-    return jsonify({"message": "Animal deleted from rescue organisation"})
+    # animals_rescues_query = animals_rescues.delete().where(
+    #     animals_rescues.c.animal_id == animal.id and animals_rescues.c.rescue_id == rescue.id)
+    # db.session.execute(animals_rescues_query)
+    # db.session.commit()
+    return jsonify({"message": "Animal deleted from rescue organisation," f"animal_id: {animal.id},"f"rescue_id: {rescue.id}"})

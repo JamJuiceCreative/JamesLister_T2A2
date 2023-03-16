@@ -8,7 +8,7 @@ class Animal(db.Model):
     rescues = db.relationship(
         "Rescue",
         secondary=animals_rescues,
-        backref=db.backref("animal_rescues", lazy="dynamic"),
+        backref=db.backref("animal", lazy="dynamic"),
         lazy="dynamic"
     )
     def add_rescue(self, rescue):
