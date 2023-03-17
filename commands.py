@@ -78,6 +78,7 @@ def seed_db():
             name = "Karen's Koala Sanctuary",
             classification = "Koalas Only",
             town = "Brisbane",
+            contact_number = "0410 111 111", 
             user_id = user1.id
         )
         db.session.add(rescue1)
@@ -90,6 +91,7 @@ def seed_db():
             name = "Razor's Reptile Lodge",
             classification = "Reptiles",
             town = "Cairns",
+            contact_number = "0410 222 222", 
             user = user2
         )
         db.session.add(rescue2)
@@ -102,6 +104,7 @@ def seed_db():
             name = "Maggie's Marsupial Madhouse",
             classification = "Marsupials",
             town = "Byron Bay",
+            contact_number = "0410 333 333",
             user = user3
         )
         db.session.add(rescue3)
@@ -114,6 +117,7 @@ def seed_db():
             name = "Molly's Montreme Rescue",
             classification = "Monotremes",
             town = "Hobart",
+            contact_number = "0410 444 444",
             user = user4
         )
         db.session.add(rescue4)
@@ -125,6 +129,7 @@ def seed_db():
         corkboard1 = Corkboard(
             # Attributes only, SQLAlchemy to manage ID at this stage
             notice = "Activities for Volunteers",
+            where = "",
             description = "Here you can post activities for volunteers such as supply runs, working b's and cleanups",
             date = date.today(),
             status = "Open",

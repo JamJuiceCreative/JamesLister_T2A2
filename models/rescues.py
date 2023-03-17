@@ -7,6 +7,7 @@ class Rescue(db.Model):
     name = db.Column(db.String())
     classification = db.Column(db.String())
     town = db.Column(db.String())
+    contact_number = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     animals = db.relationship(
         "Animal",

@@ -27,6 +27,7 @@ def get_rescues():
     result = rescues_schema.dump(rescues_list)
     return jsonify(result)
 
+
 # GET single rescue by ID endpoint
 @rescues.route("/<int:id>/", methods=["GET"])
 def get_rescue(id):
@@ -74,9 +75,8 @@ def create_rescue():
 @jwt_required()
 # rescue id is required to add an animal
 def add_animal(id):
-    # #Create a new comment
+    #Create a new animal
     animal_fields = animal_schema.load(request.json)
-
     #get the user id invoking get_jwt_identity
     user_id = get_jwt_identity()
     #Find it in the db
@@ -122,7 +122,6 @@ def add_animal(id):
         animals_rescues_query = animals_rescues.insert().values(rescue_id=rescue.id, animal_id=new_animal.id)
         db.session.execute(animals_rescues_query)
         db.session.commit()
-        
         #return the new animal in the response
         return jsonify(animal_schema.dump(new_animal,))
 
@@ -134,15 +133,16 @@ def update_rescue(id):
     rescue_fields = rescue_schema.load(request.json)
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    if not user:
-        return abort(401, description="You're not authorised to do that!")
-    # Come back to this, I might not want to restrict this functionality to only admin
-    if not user.admin:
-        return abort(401, description="You must be an admin to do that!")
-    rescue = Rescue.query.filter_by(id=id).first()
-    if not rescue:
-        return abort (400, description = "Rescue doesn't exist")
-    # update rescue details
+    if user.admin:
+        rescue = Rescue.query.get(id)
+        if not rescue:
+            return abort(400, description="Rescue doesn't exist")
+    else:
+        if not user:
+            return abort(401, description="You're not authorized to do that!")
+        rescue = Rescue.query.filter_by(id=id, user_id=user_id).first()
+        if not rescue:
+            return abort(400, description="Rescue doesn't exist or doesn't belong to you")
     rescue.name = rescue_fields["name"]
     rescue.classification = rescue_fields["classification"]
     rescue.town = rescue_fields["town"]
@@ -195,4 +195,29 @@ def delete_animal(id):
     #     animals_rescues.c.animal_id == animal.id and animals_rescues.c.rescue_id == rescue.id)
     # db.session.execute(animals_rescues_query)
     # db.session.commit()
-    return jsonify({"message": "Animal deleted from rescue organisation," f"animal_id: {animal.id},"f"rescue_id: {rescue.id}"})
+    return jsonify({"message": "Animal deleted from rescue organisation"})
+
+# DELETE rescue endpoint
+@rescues.route("/<int:id>/", methods=["DELETE"])
+@jwt_required()
+def delete_rescue(id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if user.admin:
+        rescue = Rescue.query.get(id)
+        if not rescue:
+            return abort(400, description="Rescue doesn't exist")
+    else:
+        if not user:
+            return abort(401, description="You're not authorized to do that!")
+        rescue = Rescue.query.filter_by(id=id, user_id=user_id).first()
+        if not rescue:
+            return abort(400, description="Rescue doesn't exist or doesn't belong to you")
+
+    db.session.delete(rescue)
+    db.session.commit()
+    response = {
+        "message": "Rescue Deleted from database!"
+    }
+    return (response), 200
+    

@@ -6,9 +6,9 @@ class RescueSchema(ma.Schema):
     class Meta:
         ordered=True
         # Fields to expose
-        fields = ("id", "name", "classification", "town", "user_id", "animals")
+        fields = ("name", "classification", "town", "contact_number", "user", "animals")
     user = fields.Nested("UserSchema", only=("name",))
-    animals = fields.List(fields.Nested("AnimalSchema", exclude=('rescue',)))
+    animals = fields.List(fields.Nested("AnimalSchema", only=("name",)))
 
 #single rescue schema, when one rescue needs to be retrieved
 rescue_schema = RescueSchema()

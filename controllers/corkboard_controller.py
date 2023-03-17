@@ -55,6 +55,7 @@ def create_corkboard():
     new_corkboard = Corkboard()
     new_corkboard.date = date.today()
     new_corkboard.notice = corkboard_fields["notice"]
+    new_corkboard.where = corkboard_fields["where"]
     new_corkboard.description = corkboard_fields["description"]
     new_corkboard.status = corkboard_fields["status"]
     new_corkboard.user_id = user_id
@@ -121,7 +122,7 @@ def update_corkboard(id):
     db.session.commit()
     return jsonify(corkboard_schema.dump(corkboard))
 
-# DELETE notice endpoint
+# DELETE corkboard endpoint
 @corkboards.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_corkboard(id):

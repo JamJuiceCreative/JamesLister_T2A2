@@ -41,10 +41,10 @@ def get_animal(id):
 @animals.route("/search", methods=["GET"])
 def search_rescues():
     animals_list = []
-    if request.args.get('name'):
-        animals_list = Animal.query.filter_by(name = request.args.get('name'))
-    elif request.args.get('classification'):
-        animals_list = Animal.query.filter_by(classification = request.args.get('classification'))
+    if request.args.get('classification'):
+        animals_list = Animal.query.join(Animal.rescues).filter(Animal.classification.ilike('%' + request.args.get('classification') + '%')).all()
+    elif request.args.get('name'):
+        animals_list = Animal.query.join(Animal.rescues).filter(Animal.name.ilike('%' + request.args.get('name') + '%')).all()
 
     result = animals_schema.dump(animals_list)
     return jsonify(result)
