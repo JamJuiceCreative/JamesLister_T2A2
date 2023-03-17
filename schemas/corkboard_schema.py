@@ -5,7 +5,7 @@ class CorkboardSchema(ma.Schema):
     class Meta:
         ordered = True
         # Fields to expose
-        fields = ("id", "date", "notice", "where", "description", "status", "user", "rescue", "responses")
+        fields = ("date", "notice", "where", "description", "status", "user", "rescue", "responses")
     user = fields.Nested("UserSchema", only=("name",))
     rescue = fields.Nested("RescueSchema", only=("id", "name"))
     responses = fields.List(fields.Nested("ResponseSchema"))

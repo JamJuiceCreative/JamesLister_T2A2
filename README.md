@@ -79,24 +79,58 @@ Object-Relational Mapping, or ORM, is a programming approach that converts a rel
 **This deletes the species from the specified rescue by ID (bearer access token of associated user required) If the animal doesn't have associations with any other rescues it will be deleted from the database entirely. If it has associations with other rescues it will only be deleted from the associated rescue.*
 
 ### 11. **DELETE** RESCUE BY ID - localhost:5000/rescues/ID
-**This associated user or the admin can delete the rescue by ID.*
+**The associated user or the admin can delete the rescue by ID.*
 
 ### 12. **GET** ANIMALS - localhost:5000/animals
-**This returns all animals in the database with along with their classification.*
+**This returns all animals in the database along with their classification and associated rescue information.*
 
 ### 13. **GET** ANIMALS BY ID - localhost:5000/animals/ID
 **This returns the animal in the database corresponding to the animal ID*
 
 ### 14. **GET** SEARCH ANIMALS BY NAME OR CLASSIFICATION - localhost:5000/animals/search?name=name or/ classification=classification
-**This allows user to search for animals by name or classification and is case insensitive.*
+**This allows user to search for animals by name or classification and is case insensitive. Returns the animal and classification along with any rescue details it's associated with.*
 
-### 15. 
+### 15. **GET** CORKBOARD NOTICES - localhost:5000/corkboards
+**This returns all corkboard notices in the database along with associated user name and any responses.
 
+### 16. **GET** CORKBOARD NOTICE BY ID - localhost:5000/corkboards/ID
+**This returns the corkboard notice in the database corresponding to the ID*
 
-* R5 Document all endpoints for your API
+### 17. **GET** SEARCH CORKBOARD NOTICES BY STATUS - localhost:5000/corkboard/search?status=status
+**This allows user to search for corkboard notices by status and is case insensitive. Returns any notices with matching status along with user details and any responses.*
 
-* R6 An ERD for your app
+### 18. **POST** NEW CORKBOARD NOTICE - localhost:5000/corkboards
+```json
+{"notice": "Title of notice",
+"where": "Location/ Rescue Organisation",
+"description": "description of notice",
+"status": "status"}
+```
+**This creates a corkboard notice under the ID of the associated user (bearer access token required to determine user). Automatically assigns the current date.*
 
+### 19. **POST** RESPONSE TO CORKBOARD NOTICE BY ID - localhost:5000/ID/responses
+```json
+{"response": "Insert Response"}
+```
+**This allows users to respond to notices and responses will be attached to the notice determined by corkboard ID.*
+
+### 20. **PUT** UPDATE CORKBOARD NOTICE BY ID - localhost:5000/corkboards/ID
+```json
+{"notice": "Update Title of notice",
+"where": "Update Location/ Rescue Organisation",
+"description": "Update description of notice",
+"status": "Update status"}
+```
+**This updates the specified corkboard notice by ID (bearer access token of associated user required)*
+
+### 21. **DELETE** CORKBOARD NOTICE BY ID - localhost:5000/corkboards/ID
+**The associated user or the admin can delete the rescue by ID.*<br>
+<br>
+
+## <u>WRAPI ENTITY RELATIONSHIP DIAGRAM <br>
+<br>
+
+![WRAPI ERD](./docs/wrapi_ERD.drawio.png)
 
 * R7 Detail any third party services that your app will use
 

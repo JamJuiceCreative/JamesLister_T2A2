@@ -213,7 +213,7 @@ def delete_rescue(id):
         rescue = Rescue.query.filter_by(id=id, user_id=user_id).first()
         if not rescue:
             return abort(400, description="Rescue doesn't exist or doesn't belong to you")
-
+    
     db.session.delete(rescue)
     db.session.commit()
     response = {

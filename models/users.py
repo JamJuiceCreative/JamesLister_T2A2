@@ -11,7 +11,7 @@ class User(db.Model):
         backref="user",
         cascade="all, delete"
     )
-    corkboard = db.relationship(
+    corkboards = db.relationship(
         "Corkboard",
         backref="user",
         cascade="all, delete"
