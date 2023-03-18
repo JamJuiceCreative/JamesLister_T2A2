@@ -18,3 +18,30 @@ def get_users():
     users_list = User.query.all()
     result = users_schema.dump(users_list)
     return jsonify(result)
+
+
+# DELETE user by ID endpoint
+@users.route("/<int:id>/", methods=["DELETE"])
+@jwt_required()
+def delete_user(id):
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return abort(401, description="You're not authorized to do that!")
+    if user.admin:
+        user_to_delete = User.query.get(id)
+        if not user_to_delete:
+            return abort(400, description="User doesn't exist!")
+    else:
+        if not user:
+            return abort(401, description="You're not authorized to do that!")
+        if user.id != id:
+            return abort(401, description="You're not authorized to delete this user!")
+        user_to_delete = user
+    
+    db.session.delete(user_to_delete)
+    db.session.commit()
+    response = {
+        "message": "User deleted from database!"
+    }
+    return (response), 200

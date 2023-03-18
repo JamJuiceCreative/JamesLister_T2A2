@@ -31,19 +31,10 @@ def seed_db():
             admin = True
         )
         db.session.add(admin_user)
-    user1 = User.query.filter_by(email="user1@email.com").first()
-    if not user1:
-        user1 = User(
-            name = "Karen Gum",
-            email = "user1@email.com",
-            password = bcrypt.generate_password_hash("123456").decode("utf-8")
-        )
-        db.session.add(user1)
-    
     user2 = User.query.filter_by(email="user2@email.com").first()
     if not user2:
         user2 = User(
-            name = "Razor Jones",
+            name = "Karen Gum",
             email = "user2@email.com",
             password = bcrypt.generate_password_hash("123456").decode("utf-8")
         )
@@ -52,7 +43,7 @@ def seed_db():
     user3 = User.query.filter_by(email="user3@email.com").first()
     if not user3:
         user3 = User(
-            name = "Maggie Molotov",
+            name = "Razor Jones",
             email = "user3@email.com",
             password = bcrypt.generate_password_hash("123456").decode("utf-8")
         )
@@ -61,11 +52,20 @@ def seed_db():
     user4 = User.query.filter_by(email="user4@email.com").first()
     if not user4:
         user4 = User(
-            name = "Molly Russle",
+            name = "Maggie Molotov",
             email = "user4@email.com",
             password = bcrypt.generate_password_hash("123456").decode("utf-8")
         )
         db.session.add(user4)
+    
+    user5 = User.query.filter_by(email="user5@email.com").first()
+    if not user5:
+        user5 = User(
+            name = "Molly Russle",
+            email = "user5@email.com",
+            password = bcrypt.generate_password_hash("123456").decode("utf-8")
+        )
+        db.session.add(user5)
     
     db.session.commit()
    
@@ -76,10 +76,10 @@ def seed_db():
         rescue1 = Rescue(
             # Attributes only, SQLAlchemy to manage ID
             name = "Karen's Koala Sanctuary",
-            classification = "Koalas Only",
+            classification = "koalas only",
             town = "Brisbane",
             contact_number = "0410 111 111", 
-            user_id = user1.id
+            user_id = user2.id
         )
         db.session.add(rescue1)
 
@@ -89,10 +89,10 @@ def seed_db():
         rescue2 = Rescue(
             # Attributes only, SQLAlchemy to manage ID at this stage
             name = "Razor's Reptile Lodge",
-            classification = "Reptiles",
+            classification = "reptiles",
             town = "Cairns",
             contact_number = "0410 222 222", 
-            user = user2
+            user = user3
         )
         db.session.add(rescue2)
     
@@ -102,10 +102,10 @@ def seed_db():
         rescue3 = Rescue(
             # Attributes only, SQLAlchemy to manage ID at this stage
             name = "Maggie's Marsupial Madhouse",
-            classification = "Marsupials",
+            classification = "marsupials",
             town = "Byron Bay",
             contact_number = "0410 333 333",
-            user = user3
+            user = user4
         )
         db.session.add(rescue3)
     
@@ -115,10 +115,10 @@ def seed_db():
         rescue4 = Rescue(
             # Attributes only, SQLAlchemy to manage ID at this stage
             name = "Molly's Montreme Rescue",
-            classification = "Monotremes",
+            classification = "monotremes",
             town = "Hobart",
             contact_number = "0410 444 444",
-            user = user4
+            user = user5
         )
         db.session.add(rescue4)
 
@@ -146,35 +146,35 @@ def seed_db():
     # Add the object as a new row to the table
     db.session.add(response1)
     # Check to see if Koala already exists
-    koala = Animal.query.filter_by(name="Koala").first()
+    koala = Animal.query.filter_by(name="koala").first()
     if not koala:
         animal1 = Animal(
-            name = "Koala",
-            classification = "Marsupial"
+            name = "koala",
+            classification = "marsupial"
         )
         db.session.add(animal1)
     # Check to see if Kangaroo already exists
-    kangaroo = Animal.query.filter_by(name="Kangaroo").first()
+    kangaroo = Animal.query.filter_by(name="kangaroo").first()
     if not kangaroo:
         animal2 = Animal(
-            name = "Kangaroo",
-            classification = "Marsupial"
+            name = "kangaroo",
+            classification = "marsupial"
         )
         db.session.add(animal2)
     # Check to see if Echidna already exists
-    echidna = Animal.query.filter_by(name="Echidna").first()
+    echidna = Animal.query.filter_by(name="echidna").first()
     if not echidna:
         animal3 = Animal(
-            name = "Echidna",
-            classification = "Monotreme"
+            name = "echidna",
+            classification = "monotreme"
         )
         db.session.add(animal3)
     # Check to see if Crocodile already exists
-    crocodile = Animal.query.filter_by(name="Crocodile").first()
+    crocodile = Animal.query.filter_by(name="crocodile").first()
     if not crocodile:
         animal4 = Animal(
-            name = "Crocodile",
-            classification = "Reptile"
+            name = "crocodile",
+            classification = "reptile"
         )
         db.session.add(animal4)
 

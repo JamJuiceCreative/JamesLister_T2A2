@@ -48,3 +48,39 @@ def search_rescues():
 
     result = animals_schema.dump(animals_list)
     return jsonify(result)
+
+# DELETE animals with no associations
+@animals.route("/delete", methods=["DELETE"])
+def delete_animals():
+    if request.args.get('classification'):
+        animals_to_delete = Animal.query \
+            .outerjoin(Animal.rescues) \
+            .filter(Animal.classification.ilike('%' + request.args.get('classification') + '%')) \
+            .filter(Rescue.id == None) \
+            .all()
+    elif request.args.get('name'):
+        animals_to_delete = Animal.query \
+            .outerjoin(Animal.rescues) \
+            .filter(Animal.name.ilike('%' + request.args.get('name') + '%')) \
+            .filter(Rescue.id == None) \
+            .all()
+
+    for animal in animals_to_delete:
+        db.session.delete(animal)
+    db.session.commit()
+
+    return jsonify({'message': f'{len(animals_to_delete)} animals deleted.'})
+
+# DELETE all animals with no associations in "animals_rescues" join table
+@animals.route("/delete-all", methods=["DELETE"])
+def delete_all_animals():
+    animals_to_delete = Animal.query \
+        .outerjoin(Animal.rescues) \
+        .filter(Rescue.id == None) \
+        .all()
+
+    for animal in animals_to_delete:
+        db.session.delete(animal)
+    db.session.commit()
+
+    return jsonify({'message': f'{len(animals_to_delete)} animals deleted.'})
