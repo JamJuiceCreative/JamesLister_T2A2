@@ -174,7 +174,7 @@ flask run
 
 
 ### 18. **GET** CORKBOARD NOTICES - localhost:5000/corkboards
-**This returns all corkboard notices in the database along with associated user name and any responses.
+**This returns all corkboard notices in the database along with associated user name and any responses.*
 
 ### 19. **GET** CORKBOARD NOTICE BY ID - localhost:5000/corkboards/ID
 **This returns the corkboard notice in the database corresponding to the ID*
@@ -207,7 +207,8 @@ flask run
 **This updates the specified corkboard notice by ID (bearer access token of associated user required)*
 
 ### 24. **DELETE** CORKBOARD NOTICE BY ID - localhost:5000/corkboards/ID
-**The associated user or the admin can delete the rescue by ID.*<br>
+**The associated user or the admin can delete the corkboard notice by ID.*
+<br>
 <br>
 
 ## <u> INFORMATION ABOUT WRAPPI_DB DATABASE'S RELATIONS;</U>

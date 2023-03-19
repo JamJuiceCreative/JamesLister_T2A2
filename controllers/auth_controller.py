@@ -7,7 +7,8 @@ from main import bcrypt
 from flask_jwt_extended import create_access_token
 
 auth = Blueprint('auth', __name__, url_prefix="/auth")
-
+# POST auth register
+# *This registers/ creates new user with bcrypt encrypted password hashing and JWT bearer token.
 
 @auth.route("/register", methods=["POST"])
 def auth_register():
@@ -27,7 +28,8 @@ def auth_register():
     access_token = create_access_token(identity=str(user.id), expires_delta=expiry)
     return jsonify({"user":user.email, "token": access_token })
 
-
+# POST auth login
+# *This returns bearer token for use on user specific functionality. Bearer token last 1 day before it expires.
 @auth.route("/login", methods=["POST"])
 def auth_login():
     user_fields = user_schema.load(request.json)

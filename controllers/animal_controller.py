@@ -8,6 +8,7 @@ from schemas.rescue_schema import rescue_schema, rescues_schema
 animals = Blueprint('animals', __name__, url_prefix="/animals")
 
 # GET all animals endpoint
+# *This returns all animals in the database along with their classification and associated rescue information.
 
 @animals.route("/", methods = ["GET"])
 def get_animals():
@@ -16,18 +17,8 @@ def get_animals():
     result = animals_schema.dump(animals_list)
     return jsonify(result)
 
-# GET all animals with associated rescues endpoint
-@animals.route("/rescues", methods = ["GET"])
-def get_animals_rescues():
-    animals = Animal.query.all()
-    result = animals_schema.dump(animals)
-    for animal in result:
-        rescue_id = animal['id']
-        rescue = Rescue.query.filter_by(id=rescue_id).first()
-        animal['rescue']=rescue_schema.dump(rescue)
-    return jsonify(result)
-
 # Get animal by ID
+# *This returns the animal in the database corresponding to the animal ID. Returns all associated rescue information.
 @animals.route("/<int:id>/", methods=["GET"])
 def get_animal(id):
     animal = Animal.query.filter_by(id=id).first()
@@ -38,6 +29,7 @@ def get_animal(id):
 
 # search for rescues by animal association
 # GET search queries with strings
+# *This allows user to search for animals by name or classification and is case insensitive. Returns the animal and classification along with any rescue details it's associated with.
 @animals.route("/search", methods=["GET"])
 def search_rescues():
     animals_list = []
@@ -50,6 +42,8 @@ def search_rescues():
     return jsonify(result)
 
 # DELETE animals with no associations
+# *This allows user to clean up the animals table in the unlikely scenario that enough rescues are deleted that there are no longer any association of rescues with that animal.
+# This part of the clean up method can be performed by search query and will delete all unassociated animals according to name or classification.
 @animals.route("/delete", methods=["DELETE"])
 def delete_animals():
     if request.args.get('classification'):
@@ -72,6 +66,7 @@ def delete_animals():
     return jsonify({'message': f'{len(animals_to_delete)} animals deleted.'})
 
 # DELETE all animals with no associations in "animals_rescues" join table
+# *Again, it would be uncommon for an animal to longer be associated with a rescue. This method will clean up all of the data from the animals table if in case there are stray animals no longer associated with any rescues.
 @animals.route("/delete-all", methods=["DELETE"])
 def delete_all_animals():
     animals_to_delete = Animal.query \

@@ -12,6 +12,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 users = Blueprint('users', __name__, url_prefix="/users")
 
 # GET users/ rescues endpoint
+# *This returns all users in database and displays their associated rescues (if any). 
 @users.route("/", methods = ["GET"])
 def get_users():
     # get all users from the database table
@@ -21,6 +22,7 @@ def get_users():
 
 
 # DELETE user by ID endpoint
+# *Deletes user and all associated data, requires bearer token and can only be performed by the user themselves or the admin. Also deletes associated corkboards and rescues. (Doesn't delete associated animals as generally they will always be associated with other rescues)
 @users.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_user(id):

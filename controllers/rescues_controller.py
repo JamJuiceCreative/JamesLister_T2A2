@@ -11,16 +11,9 @@ from schemas.animal_schema import animal_schema, animals_schema
 from flask_jwt_extended import jwt_required, get_jwt_identity
 rescues = Blueprint('rescues', __name__, url_prefix="/rescues")
 
-# GET users/ rescues endpoint
-@rescues.route("/users", methods = ["GET"])
-def get_users():
-    # get all users from the database table
-    users_list = User.query.all()
-    result = users_schema.dump(users_list)
-    return jsonify(result)
-
 
 # GET all rescues routes endpoint
+# *This returns all rescues in database and lists all of the associated animals.
 @rescues.route("/", methods=["GET"])
 def get_rescues():
     rescues_list = Rescue.query.all()
@@ -29,6 +22,7 @@ def get_rescues():
 
 
 # GET single rescue by ID endpoint
+# *This return the specific rescue determined by ID and lists it's associated animals.
 @rescues.route("/<int:id>/", methods=["GET"])
 def get_rescue(id):
     rescue = Rescue.query.filter_by(id=id).first()
@@ -38,6 +32,7 @@ def get_rescue(id):
     return jsonify(result)
 
 # GET search queries with strings
+# *This allows user to search for rescues by town or classification and is case insensitive.
 @rescues.route("/search", methods=["GET"])
 def search_rescues():
     rescues_list = []
@@ -50,6 +45,7 @@ def search_rescues():
     return jsonify(result)
 
 # POST new rescue endpoint
+# *This creates a rescue under the ID of the associated user (bearer access token required to determine user)
 @rescues.route("/", methods=["POST"])
 @jwt_required()
 def create_rescue():
@@ -70,6 +66,7 @@ def create_rescue():
     return jsonify(rescue_schema.dump(new_rescue))
 
 # POST add an animal/ classification to a rescue organisation
+# *This adds the species to the specified rescue by ID (bearer access token of associated user required) It also adds to an overall animals table which can have associations with other rescues.
 @rescues.route("/<int:id>/animals", methods=["POST"])
 # logged in user required
 @jwt_required()
@@ -126,7 +123,7 @@ def add_animal(id):
         return jsonify(animal_schema.dump(new_animal,))
 
 # PUT update rescue route endpoint
-
+# *This updates the specified rescue by ID (bearer access token of associated user required)
 @rescues.route("/<int:id>/", methods=["PUT"])
 @jwt_required()
 def update_rescue(id):
@@ -146,11 +143,13 @@ def update_rescue(id):
     rescue.name = rescue_fields["name"]
     rescue.classification = rescue_fields["classification"]
     rescue.town = rescue_fields["town"]
+    rescue.contact_number = rescue_fields["contact_number"]
     db.session.commit()
     return jsonify(rescue_schema.dump(rescue))
     
 
 # DELETE delete an animal from a rescue organisation
+
 @rescues.route("/<int:id>/animals", methods=["DELETE"])
 # logged in user required
 @jwt_required()
@@ -198,6 +197,7 @@ def delete_animal(id):
     return jsonify({"message": "Animal deleted from rescue organisation"})
 
 # DELETE rescue endpoint
+# *The associated user or the admin can delete the rescue by ID.
 @rescues.route("/<int:id>/", methods=["DELETE"])
 @jwt_required()
 def delete_rescue(id):
